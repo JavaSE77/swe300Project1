@@ -6,6 +6,10 @@ import java.util.Scanner;
 /**
  * Programming Challenge:  LEQEX
  * @author merlin
+ * 
+ * Contributers: 
+ * Makaylie Lucas
+ * Russell Stevens
  */
 public class Project1
 {
@@ -48,6 +52,10 @@ public class Project1
      * @param int currentLevel - current level to check
      * @param int currentElements - current elements to check
      * 
+     * This is the main driver of the program. This takes in the numbers and trys to
+     * stack them. 
+     * https://www.codechef.com/problems/LEQEX
+     * 
      * @return returns true if the element can be paired
      * */
     boolean works(int currentLevel, int currentNumElements)
@@ -85,6 +93,10 @@ public class Project1
     /**
      * @param Scanner scanner - (System.in)
      * @param int numElements - number of elements in subarray
+     * 
+     * Takes the number of elements and reads in the numbers from the input
+     * scanner according to the number of elements expected and converts
+     * them into an array of ints
      * 
      * @return int[] subArray - list of values read in from the scanner. 
      * Size is equal to numElements
@@ -178,6 +190,11 @@ public class Project1
 
     private class NoElementToPair extends Exception
     {
+    	/*
+    	 * This exception is only thrown when the element of the subarray that is being paired
+    	 * has no possible pair. For example, with the input 1, 5, 1, the input 5 has no element to pair
+    	 * with and this exception is thrown.
+    	 * */
 
 		/**
 		 * generic ID.
