@@ -10,9 +10,8 @@ import java.util.Scanner;
 public class Project1
 {
 
-    private int[] data;
-    private int count = 0;
-    private  boolean[] t;
+    private int[] scannerInputData;
+    
     /**
      * @param args
      * @throws IOException
@@ -22,89 +21,155 @@ public class Project1
         new Project1().run();
     }
 
+    /**
+     * 
+     * */
     void run()
     {
     	System.out.println("Starting");
-        Scanner x = new Scanner(System.in);
-        int n = x.nextInt();
-        for (int i = 0; i < n; i++)
+        Scanner scanner = new Scanner(System.in);
+        //this input tells the program how many triangles we are going to calculate
+        int numOfSubArrays = scanner.nextInt();
+        for (int i = 0; i < numOfSubArrays; i++)
         {
-            data = readInProblem(x, x.nextInt());
-            System.out.println(max(data));
+
+            scannerInputData = readInProblem(scanner, scanner.nextInt());
+            System.out.println(max(scannerInputData));
         }
     }
 
-    int[] readInProblem(Scanner x, int sz)
+    /**
+     * @param Scanner scanner - (System.in)
+     * @param int numElements - number of elements in subarray
+     * 
+     * @return int[] subArray - list of values read in from the scanner. 
+     * Size is equal to numElements
+     * */
+    int[] readInProblem(Scanner scanner, int numElements)
     {
-        int[] data = new int[sz];
-        for (int i = 0; i < sz; i++) data[i] = x.nextInt();
-        return data;
-    }
-
-    int max(int[] i)
-    {
-        int mx = 0;
-        int curr = 0;
-        while (maxPossible(i.length - curr) > mx)
+        int[] subArray = new int[numElements];
+        
+        for (int i = 0; i < numElements; i++) 
         {
-            int currMax = max(i, curr);
-            if (currMax > mx)
-            mx = currMax;
-            curr++;
+        	subArray[i] = scanner.nextInt();
         }
-        return mx;
+        	
+        return subArray;
     }
 
-    int max(int[] i, int s)
+    /**
+     * @param int[] subArray - elements of the sub array received from readInProblem
+     * 
+     * @return int maxLevel - returns the max level of the stack
+     * */
+    int max(int[] subArray)
     {
-        int x = 0;
-        for (int num = 1; num <= maxPossible(data.length - s); num++)
-
-        if (works(s, num*2+1))
-        x = num;
-
-        return x;
+        int maxLevel = 0;
+        int currentLevel = 0;
+        while (maxPossible(subArray.length - currentLevel) > maxLevel)
+        {
+            int currentMax = currentLevelMax(subArray, currentLevel);
+            if (currentMax > maxLevel) {
+            	maxLevel = currentMax;
+            }
+            currentLevel++;
+           
+        }
+        return maxLevel;
     }
 
-    int maxPossible(int count)
+    /**
+     * @param int[] subArray - the data in the subArray currently being used
+     * @param int currentLevel - the current level the program is working on
+     * 
+     * @return int maxLevel - returns the new max level after calculation
+     * */
+    int currentLevelMax(int[] subArray, int currentLevel)
     {
-        int flat = count - 1;
-        return flat / 2;
+        int maxLevel = 0;
+        for (int currentPairs = 1; currentPairs <= maxPossible(subArray.length - currentLevel); currentPairs++) {
+
+        	if (works(currentLevel, currentPairs*2+1)) {
+        		maxLevel = currentPairs;
+        	}
+        }
+        
+        return maxLevel;
     }
 
-    boolean works(int s, int l)
+    /**
+     * @param int numElements - Number of elements in the array
+     * 
+     * Takes the number of elements in the array, subtracts one, and devides by 2 to give
+     * the max number of pairs you could have with the given number of elements
+     * 
+     * @return int pairs - max number of pairs
+     * */
+    int maxPossible(int numElements)
     {
-        t = new boolean[l];
-        int f = 0;
-        count = 0;
-        while (count < maxPossible(l))
+        int pairs = (numElements - 1) / 2;
+        return pairs;
+    }
+
+    /**
+     * @param int currentLevel - current level to check
+     * @param int currentElements - current elements to check
+     * 
+     * @return returns true if the element can be paired
+     * */
+    boolean works(int currentLevel, int currentElements)
+    {
+        boolean[] isPaired = new boolean[currentElements];
+        int currentElement = 0;
+        int currentPair = 0;
+        while (currentPair < maxPossible(currentElements)) {
 
         try
         {
-            t[f] = true;
-            int p = next(t, f);;
-            while (data[s + f] != data[s + p])
-            p = next(t, p);
-            count++;
-            t[p] = true;
-            f = next(t, f);
-        } catch (Nope e)
+            isPaired[currentElement] = true;
+            int nextElement = next(isPaired, currentElement);
+            	while (scannerInputData[currentLevel + currentElement] != scannerInputData[currentLevel + nextElement])
+            	{
+            		nextElement = next(isPaired, nextElement);
+            	
+            	}
+            currentPair++;
+            isPaired[nextElement] = true;
+            currentElement = next(isPaired, currentElement);
+        } catch (NoElementToPair execption)
         {
             return false;
         }
+    }
         return true;
     }
 
-    int next(boolean[] u, int x) throws Nope
+    /**
+     * @param boolean[] isPaired - will be true for every value in the index that has a paired value
+     * @param int nextElement - element to be checked for pair
+     * 
+     * @return int nextElement - returns the next element to be paired.
+     * */
+    int next(boolean[] isPaired, int nextElement) throws NoElementToPair
     {
-        x = x+1;
-        while (x < u.length && u[x])
-            x++;
-        if (x == u.length) throw new Nope();
-        return x;
+        nextElement = nextElement+1;
+        while ((nextElement < isPaired.length) && isPaired[nextElement]) {
+            nextElement++;
+        }
+        
+        if (nextElement == isPaired.length) {
+        	throw new NoElementToPair();
+        }
+        
+        return nextElement;
     }
 
-    private class Nope extends Exception
+    private class NoElementToPair extends Exception
     {
+
+		/**
+		 * generic ID.
+		 */
+		private static final long serialVersionUID = -5100966632854247986L;
     }
 }
