@@ -10,6 +10,11 @@ import java.util.Scanner;
 public class Project1
 {
 
+	/*
+	 * Instance variables are used in more then one method.
+	 * All instance variables only used in one method have been removed and
+	 * reduced to local variables
+	 * */
     private int[] scannerInputData;
     
     /**
@@ -36,6 +41,45 @@ public class Project1
             scannerInputData = readInProblem(scanner, scanner.nextInt());
             System.out.println(max(scannerInputData));
         }
+    }
+    
+
+    /**
+     * @param int currentLevel - current level to check
+     * @param int currentElements - current elements to check
+     * 
+     * @return returns true if the element can be paired
+     * */
+    boolean works(int currentLevel, int currentNumElements)
+    {
+        boolean[] isPaired = new boolean[currentNumElements];
+        int currentElement = 0;
+        int currentPair = 0;
+        while (currentPair < maxPossible(currentNumElements)) {
+
+        try
+        {
+            isPaired[currentElement] = true;
+            int nextElement = next(isPaired, currentElement);
+            	while (scannerInputData[currentLevel + currentElement] != scannerInputData[currentLevel + nextElement])
+            	{
+            		nextElement = next(isPaired, nextElement);
+            	}
+            	
+            currentPair++;
+            isPaired[nextElement] = true;
+            currentElement = next(isPaired, currentElement);
+        } catch (NoElementToPair exception)
+        {
+        	/*
+        	 * This exception is only thrown when the element of the subarray that is being paired
+        	 * has no possible pair. For example, with the input 1, 5, 1, the input 5 has no element to pair
+        	 * with and this exception is thrown.
+        	 * */
+            return false;
+        }
+    }
+        return true;
     }
 
     /**
@@ -111,38 +155,6 @@ public class Project1
         return pairs;
     }
 
-    /**
-     * @param int currentLevel - current level to check
-     * @param int currentElements - current elements to check
-     * 
-     * @return returns true if the element can be paired
-     * */
-    boolean works(int currentLevel, int currentElements)
-    {
-        boolean[] isPaired = new boolean[currentElements];
-        int currentElement = 0;
-        int currentPair = 0;
-        while (currentPair < maxPossible(currentElements)) {
-
-        try
-        {
-            isPaired[currentElement] = true;
-            int nextElement = next(isPaired, currentElement);
-            	while (scannerInputData[currentLevel + currentElement] != scannerInputData[currentLevel + nextElement])
-            	{
-            		nextElement = next(isPaired, nextElement);
-            	
-            	}
-            currentPair++;
-            isPaired[nextElement] = true;
-            currentElement = next(isPaired, currentElement);
-        } catch (NoElementToPair execption)
-        {
-            return false;
-        }
-    }
-        return true;
-    }
 
     /**
      * @param boolean[] isPaired - will be true for every value in the index that has a paired value
