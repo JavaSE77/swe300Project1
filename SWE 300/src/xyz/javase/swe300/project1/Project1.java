@@ -31,18 +31,21 @@ public class Project1
     }
 
     /**
-     * 
+     * Main driver of the program. Takes input from console and calculates
+     * the calls the other triangle stacking methods
      * */
     void run()
     {
+    	//This print line just opens a console in eclipse. Not require
     	System.out.println("Starting");
         Scanner scanner = new Scanner(System.in);
         //this input tells the program how many triangles we are going to calculate
         int numOfSubArrays = scanner.nextInt();
         for (int i = 0; i < numOfSubArrays; i++)
         {
-
+        	//Read the scanner input data into a private vairable for other methods to view
             scannerInputData = readInProblem(scanner, scanner.nextInt());
+            //Prints out the results from max. max() calculates the number of stacked triangles 
             System.out.println(max(scannerInputData));
         }
     }
@@ -60,21 +63,28 @@ public class Project1
      * */
     boolean works(int currentLevel, int currentNumElements)
     {
+    	//array of booleans. Other examples of this code use a map, but this works too. Each element in isPaired corresponds
+    	//to an element in scannerInputData of the same index
         boolean[] isPaired = new boolean[currentNumElements];
         int currentElement = 0;
         int currentPair = 0;
+        //Loop while the number of currently stacked blocks are less then the theoretical max
         while (currentPair < maxPossible(currentNumElements)) {
 
         try
         {
             isPaired[currentElement] = true;
+            //tries to find the next element to pair with the current triangle
             int nextElement = next(isPaired, currentElement);
+            	//Checks to see if the value in the input data is pairable to the current triangle
             	while (scannerInputData[currentLevel + currentElement] != scannerInputData[currentLevel + nextElement])
             	{
             		nextElement = next(isPaired, nextElement);
             	}
-            	
+            
+            //Increases the counter of current pairs
             currentPair++;
+            //We paired this value to the triangle we were checking, this updates the "map" to make sure we do not double count
             isPaired[nextElement] = true;
             currentElement = next(isPaired, currentElement);
         } catch (NoElementToPair exception)
@@ -105,6 +115,7 @@ public class Project1
     {
         int[] subArray = new int[numElements];
         
+        //Reads in the input according the LEQEX standard of input
         for (int i = 0; i < numElements; i++) 
         {
         	subArray[i] = scanner.nextInt();
@@ -122,9 +133,12 @@ public class Project1
     {
         int maxLevel = 0;
         int currentLevel = 0;
+        //Get the theoretical max for each sub array and loop through it
         while (maxPossible(subArray.length - currentLevel) > maxLevel)
         {
+        	//increments the current max level of the tower
             int currentMax = currentLevelMax(subArray, currentLevel);
+            //Make sure the tower does not stack higher then the theoretical max 
             if (currentMax > maxLevel) {
             	maxLevel = currentMax;
             }
@@ -143,8 +157,10 @@ public class Project1
     int currentLevelMax(int[] subArray, int currentLevel)
     {
         int maxLevel = 0;
+        //loops through the sub array and calculates the running max total.
         for (int currentPairs = 1; currentPairs <= maxPossible(subArray.length - currentLevel); currentPairs++) {
-
+        	
+        	//check to see if the current level can stack higher with the given input
         	if (works(currentLevel, currentPairs*2+1)) {
         		maxLevel = currentPairs;
         	}
@@ -177,10 +193,11 @@ public class Project1
     int next(boolean[] isPaired, int nextElement) throws NoElementToPair
     {
         nextElement = nextElement+1;
+        //Skip over all elements that already have a pair
         while ((nextElement < isPaired.length) && isPaired[nextElement]) {
             nextElement++;
         }
-        
+        //throw an exception when there is nothing to pair to the element
         if (nextElement == isPaired.length) {
         	throw new NoElementToPair();
         }
